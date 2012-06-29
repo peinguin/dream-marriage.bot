@@ -19,7 +19,7 @@ push(@headers, 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/
 push(@headers, 'Accept-Language: en-us,en;q=0.5');
 
 push(@headers, 'Connection: keep-alive');
-push(@headers, 'Referer: http://www.dream-marriage.com/messaging/write.php?receiver=1113130');
+#push(@headers, 'Referer: http://www.dream-marriage.com/messaging/write.php?receiver=1113130');
 push(@headers, 'Cookie: '.join('; ', @cookies));
 
 #push(@headers, 'Cache-Control: no-cache');
@@ -617,8 +617,7 @@ print scalar(keys @receivers);
 =cut
 
 #my $message = 'Hi. How are you?';
-my $message = 'Do you like Star Wars?
-Or maybe you like to read?';
+my $message = 'Do you like read fantasy?';
 
 for my $receiver (@receivers){
 
@@ -675,8 +674,13 @@ for my $receiver (@receivers){
 	    print "An error happened: $retcode ".$curl->strerror($retcode)." ".$curl->errbuf."\n";
 	    die;
 	}else{
-		my $response_code = $curl->getinfo(CURLINFO_HTTP_CODE);
+		my $response_code = $curl->getinfo(CURLINFO_HTTP_CODE);die;
+=cut
+		$response_body =~ m/Location ([^\r\n]+)/;
+		my $location = $1;
 
+		print $response_body;die;
+=cut
 		my $curl = WWW::Curl::Easy->new;
 		$curl->setopt(CURLOPT_HEADER,0);
 		$curl->setopt(CURLOPT_HTTPHEADER, \@headers);
