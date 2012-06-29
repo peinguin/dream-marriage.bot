@@ -617,7 +617,9 @@ print scalar(keys @receivers);
 =cut
 
 #my $message = 'Hi. How are you?';
-my $message = 'Do you like read fantasy?';
+my $message = 'Do you like Lord of the Rings?';
+
+my $i = 0;
 
 for my $receiver (@receivers){
 
@@ -703,10 +705,12 @@ for my $receiver (@receivers){
 			$response_body =~ m/<li id="actionNotice">([^\r\n]+)<\/li>/;
 			my $notice = $1;
 
+			print ++$i." ";
+
 			if(defined $notice){
-				print "Notice: ".$notice."; For User ".$receiver;
+				print "Notice: ".$notice."; For User ".$receiver."(".$name.")";
 			}else{
-				print "Message to ".$receiver." sent";
+				print "Message to ".$receiver."(".$name.") sent";
 			}
 
 			print "\n";
