@@ -8,8 +8,7 @@ use URI::Escape;
 use WWW::Curl::Form;
 
 my @cookies = (
-    'PHPSESSID=6913a242e7854ecb7b3ec9ba4f5ed463WWd4d16985479e5a827f6c64c8c4660844b7834866632ba505bd4a1d97e6ee2b3e1340932684',
-    'imunique=1340932684_ed0bb53e3df6f3b2b09b37520ad52271'
+    'PHPSESSID=d41d8cd98f00b204e9800998ecf8427eWW9dd2750a416746322b9962eee912701122e45e87361077ea480be3f4cc95bb2b1340957100'
 );
 
 my @headers = ();
@@ -617,18 +616,26 @@ print scalar(keys @receivers);
 =cut
 
 #my $message = 'Hi. How are you?';
-my $message = 'Do you like Lord of the Rings?';
+my $message = 'Do you like borsch?';
 
 my $i = 0;
 
-for my $receiver (@receivers){
+my $already_sended = {};
+my $draftid = '';
+my $name ='';
+my $postfix = '';
+my $curlf;
+my $receiver;
+my $curl;
+
+for $receiver (@receivers){
 
 	my $time = 4+int(rand(2));
 	sleep($time);
 
 	$url = 'http://www.dream-marriage.com/messaging/write.php?receiver='.$receiver;
 	
-	my $curl = WWW::Curl::Easy->new;
+	$curl = WWW::Curl::Easy->new;
 	$curl->setopt(CURLOPT_HEADER,0);
 	$curl->setopt(CURLOPT_HTTPHEADER, \@headers);
 	$curl->setopt(CURLOPT_URL, $url);
@@ -636,8 +643,7 @@ for my $receiver (@receivers){
 	my $response_body = '';
 	$curl->setopt(CURLOPT_WRITEDATA,\$response_body);
 
-	my $draftid = '';
-	my $name ='';
+
 
 	my $retcode = $curl->perform;
 
@@ -658,15 +664,21 @@ for my $receiver (@receivers){
 
 	$response_body = '';
 	$curl->setopt(CURLOPT_WRITEDATA,\$response_body);
+	
+	if(exists($already_sended->{$name}) ) {
+		for $i (0..$already_sended->{$name}){
+			$postfix .= ' ';
+		}
+	}
 
-    my $curlf = WWW::Curl::Form->new;
+    $curlf = WWW::Curl::Form->new;
     $curlf->formadd("__tcAction[send]", "Send");
     $curlf->formadd("draftid", $draftid);
     $curlf->formadd("receiver", $receiver);
     $curlf->formadd("sender", "2604151");
     $curlf->formadd("replyId", "");
     $curlf->formadd("which_message", "plain_message");
-    $curlf->formadd("plain_message", 'Hello, '.$name.'. '.$message);
+    $curlf->formadd("plain_message", 'Hello, '.$name.'. '.$postfix.$message);
     $curlf->formadd("message", "<br />\r\n");
     $curl->setopt(CURLOPT_HTTPPOST, $curlf);
 
@@ -711,6 +723,12 @@ for my $receiver (@receivers){
 				print "Notice: ".$notice."; For User ".$receiver."(".$name.")";
 			}else{
 				print "Message to ".$receiver."(".$name.") sent";
+			}
+
+			if(exists($already_sended->{$name})){
+				$already_sended->{$name} += 1
+			}else{
+				$already_sended->{$name} = 1;
 			}
 
 			print "\n";
