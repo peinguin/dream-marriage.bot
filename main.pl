@@ -674,7 +674,7 @@ for my $receiver (@receivers){
 	    print "An error happened: $retcode ".$curl->strerror($retcode)." ".$curl->errbuf."\n";
 	    die;
 	}else{
-		my $response_code = $curl->getinfo(CURLINFO_HTTP_CODE);die;
+		my $response_code = $curl->getinfo(CURLINFO_HTTP_CODE);
 =cut
 		$response_body =~ m/Location ([^\r\n]+)/;
 		my $location = $1;
